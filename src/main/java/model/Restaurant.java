@@ -1,7 +1,10 @@
 package model;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Restaurant {
-    private int id;
+    private int id = ThreadLocalRandom.current().nextInt(1, 999999);
+    private int username;
     private String name;
     private String address;
     private String phone;
@@ -13,7 +16,16 @@ public class Restaurant {
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
+                ", userId=" + username +
                 '}';
+    }
+
+    public int getUsername() {
+        return username;
+    }
+
+    public void setUsername(int username) {
+        this.username = username;
     }
 
     public int getId() {

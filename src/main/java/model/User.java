@@ -1,9 +1,11 @@
 package model;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class User {
-    private int id;
-    private String name;
-    private String surname;
+    private int id = ThreadLocalRandom.current().nextInt(1, 999999);
+    private String username;
+    private String password;
     private int phoneNumber;
     private Role role;
 
@@ -11,8 +13,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
+                ", username='" + username + '\'' +
                 ", phoneNumber=" + phoneNumber +
                 ", role=" + role +
                 '}';
@@ -26,20 +27,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getPhoneNumber() {
@@ -56,5 +49,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -1,24 +1,15 @@
 package model;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Reservation {
-    private int id;
+    private int id = ThreadLocalRandom.current().nextInt(1, 999999);
     private int restaurantId;
-    private int userId;
+    private int username;
     private int numberSeats;
     private String date;
     private String time;
-
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "id=" + id +
-                ", restaurantId=" + restaurantId +
-                ", userId=" + userId +
-                ", numberSeats=" + numberSeats +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                '}';
-    }
+    private String message;
 
     public int getId() {
         return id;
@@ -52,12 +43,12 @@ public class Reservation {
         this.numberSeats = numberSeats;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getUsername() {
+        return username;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUsername(int username) {
+        this.username = username;
     }
 
     public int getRestaurantId() {
@@ -66,6 +57,27 @@ public class Reservation {
 
     public void setRestaurantId(int restaurantId) {
         this.restaurantId = restaurantId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id=" + id +
+                ", restaurantId=" + restaurantId +
+                ", userId=" + username +
+                ", numberSeats=" + numberSeats +
+                ", date='" + date + '\'' +
+                ", time='" + time + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }
 
