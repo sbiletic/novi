@@ -8,15 +8,25 @@ public class Restaurant {
     private String name;
     private String address;
     private String phone;
+    private User manager;
+
+    public User getManager() {
+        return manager;
+    }
+
+    public void setManager(User manager) {
+        this.manager = manager;
+    }
 
     @Override
     public String toString() {
         return "Restaurant{" +
                 "id=" + id +
+                ", username=" + username +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
-                ", userId=" + username +
+                ", manager=" + manager +
                 '}';
     }
 

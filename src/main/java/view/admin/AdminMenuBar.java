@@ -1,6 +1,7 @@
 package view.admin;
 
-import view.login.LoginPanel;
+import view.admin.manager.ManagerFrame;
+import view.login.LoginFrame;
 import javax.swing.*;
 
 public class AdminMenuBar extends JMenuBar {
@@ -10,16 +11,15 @@ public class AdminMenuBar extends JMenuBar {
 
         JMenuItem restaurantManagerItem = new JMenuItem("Restaurant Manager");
         restaurantManagerItem.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Restaurant Manager selected");
+            frame.dispose();
+            new ManagerFrame().setVisible(true);
         });
         adminMenu.add(restaurantManagerItem);
 
-        JMenuItem goBackItem = new JMenuItem("Go Back");
+        JMenuItem goBackItem = new JMenuItem("Go to login form");
         goBackItem.addActionListener(e -> {
-            frame.getContentPane().removeAll();
-            frame.getContentPane().add(new LoginPanel());
-            frame.revalidate();
-            frame.repaint();
+            frame.dispose();
+            new LoginFrame().setVisible(true);
         });
         adminMenu.add(goBackItem);
 

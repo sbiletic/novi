@@ -1,6 +1,6 @@
 package view.login;
 
-import view.admin.AdminPanel; // make sure you have this
+import view.admin.AdminFrame;
 import javax.swing.*;
 
 public class LoginMenuBar extends JMenuBar {
@@ -14,11 +14,8 @@ public class LoginMenuBar extends JMenuBar {
         // Admin Panel option
         JMenuItem adminItem = new JMenuItem("Admin Panel");
         adminItem.addActionListener(e -> {
-            // Swap current panel with AdminPanel
-            frame.getContentPane().removeAll();
-            frame.getContentPane().add(new AdminPanel(frame));
-            frame.revalidate();
-            frame.repaint();
+            frame.dispose(); // Close the current frame
+            new AdminFrame().setVisible(true); // Open the AdminFrame
         });
         fileMenu.add(adminItem);
         fileMenu.add(exitItem);
