@@ -1,13 +1,14 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Reservation {
     private int id = ThreadLocalRandom.current().nextInt(1, 999999);
     private int restaurantId;
     private int username;
-    private int numberSeats;
-    private String date;
+    private int numberOfGuests;
+    private LocalDate date;
     private String time;
     private String message;
 
@@ -27,20 +28,20 @@ public class Reservation {
         this.time = time;
     }
 
-    public String getDate() {
+    public LocalDate getLocalDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setLocalDate(LocalDate date) {
         this.date = date;
     }
 
-    public int getNumberSeats() {
-        return numberSeats;
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 
-    public void setNumberSeats(int numberSeats) {
-        this.numberSeats = numberSeats;
+    public void setNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public int getUsername() {
@@ -73,7 +74,7 @@ public class Reservation {
                 "id=" + id +
                 ", restaurantId=" + restaurantId +
                 ", userId=" + username +
-                ", numberSeats=" + numberSeats +
+                ", numberSeats=" + numberOfGuests +
                 ", date='" + date + '\'' +
                 ", time='" + time + '\'' +
                 ", message='" + message + '\'' +

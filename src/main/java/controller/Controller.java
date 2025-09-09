@@ -1,7 +1,9 @@
 package controller;
 
+import model.Reservation;
 import model.Restaurant;
 import model.User;
+import model.services.ReservationService;
 import model.services.RestaurantService;
 import model.services.UserService;
 
@@ -11,6 +13,7 @@ public class Controller {
     private final static UserService userService = new UserService();
     private static Controller instance;
     private final static RestaurantService restaurantService = new RestaurantService();
+    private final static ReservationService reservationService = new ReservationService();
     public static Controller getInstance() {
         if (instance == null) {
             instance = new Controller();
@@ -22,10 +25,10 @@ public class Controller {
         userService.addUser(user);
     }
 
-    public void removeUser(int username) {
+    public void removeUser(String username) {
          userService.removeUser(username);
     }
-    public User getUserByUsername(int username) {
+    public User getUserByUsername(String username) {
         return userService.getUserByUsername(username);
     }
 
@@ -39,5 +42,12 @@ public class Controller {
 
     public void addRestaurant(Restaurant restaurant) {
         restaurantService.add(restaurant);
+    }
+
+    public List<Restaurant> getAllRestaurants() {
+        return restaurantService.getAllRestaurants();
+    }
+    public void addReservation(Reservation reservation) {
+        reservationService.add(reservation);
     }
 }

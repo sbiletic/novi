@@ -1,5 +1,7 @@
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import model.User;
 import view.login.LoginFrame;
+import view.user.UserFrame;
 
 import javax.swing.*;
 

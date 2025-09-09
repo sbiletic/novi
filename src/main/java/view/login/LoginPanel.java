@@ -1,6 +1,10 @@
 package view.login;
 
 import controller.Controller;
+import model.Role;
+import model.User;
+import model.services.UserService;
+import view.user.UserFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,12 +51,25 @@ public class LoginPanel extends JPanel {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
-            boolean status= controller.attemptLogin(username, password);
+            boolean status = controller.attemptLogin(username, password);
             if (status) {
+
                 JOptionPane.showMessageDialog(this,
                         "Login successful!",
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE);
+
+                User object = new User();
+                object = controller.getUserByUsername(username);
+                if (object.getRole() == Role.USER){
+                    new UserFrame();
+                }
+
+                Window window = SwingUtilities.getWindowAncestor(this);
+                if (window != null) {
+                    window.dispose();
+                }
+
             } else {
                 JOptionPane.showMessageDialog(this,
                         "Login failed! Please check your username and password.",

@@ -20,14 +20,7 @@ public class Restaurant {
 
     @Override
     public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", username=" + username +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                ", manager=" + manager +
-                '}';
+        return name;
     }
 
     public int getUsername() {

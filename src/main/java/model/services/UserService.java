@@ -16,12 +16,12 @@ public class UserService {
         System.out.println("User " + user.getUsername() + " added");
     }
 
-    public void removeUser(int username) {
+    public void removeUser(String username) {
         userMap.remove(username);
         System.out.println("User " + username + " removed");
     }
 
-    public User getUserByUsername(int username) {
+    public User getUserByUsername(String username) {
         System.out.println("User " + username + " found");
         return userMap.get(username);
     }
