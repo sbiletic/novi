@@ -12,6 +12,7 @@ import java.util.List;
 public class Controller {
     private final static UserService userService = new UserService();
     private static Controller instance;
+    private static User loggedInUser;
     private final static RestaurantService restaurantService = new RestaurantService();
     private final static ReservationService reservationService = new ReservationService();
     public static Controller getInstance() {
@@ -19,6 +20,21 @@ public class Controller {
             instance = new Controller();
         }
         return instance;
+    }
+
+    public static User getLoggedInUser() {
+        if (loggedInUser == null) {
+            loggedInUser = new User();
+        }
+        return loggedInUser;
+    }
+
+    public static void setLoggedInUser(User user) {
+        loggedInUser = user;
+    }
+
+    public List<Reservation> getUserReservations(String username) {
+        return reservationService.getUserReservations(username);
     }
 
     public void addUser(User user) {
@@ -47,7 +63,13 @@ public class Controller {
     public List<Restaurant> getAllRestaurants() {
         return restaurantService.getAllRestaurants();
     }
+
     public void addReservation(Reservation reservation) {
         reservationService.add(reservation);
+    }
+
+    //TODO dovrsiti ovu metodu, dodati u restaurant service klasi metodu koja vraca objekt restaurant po parametru
+    //TODO tipa String restaurantId
+    public Restaurant getRestaurantById(int restaurantId) {
     }
 }

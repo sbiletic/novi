@@ -6,11 +6,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Reservation {
     private int id = ThreadLocalRandom.current().nextInt(1, 999999);
     private int restaurantId;
-    private int username;
+    private String username;
     private int numberOfGuests;
     private LocalDate date;
     private String time;
     private String message;
+    private ReservationStatus status = ReservationStatus.PENDING;
 
     public int getId() {
         return id;
@@ -44,11 +45,11 @@ public class Reservation {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public int getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(int username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -79,6 +80,14 @@ public class Reservation {
                 ", time='" + time + '\'' +
                 ", message='" + message + '\'' +
                 '}';
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
     }
 }
 

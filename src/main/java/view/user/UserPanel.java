@@ -4,11 +4,12 @@ import controller.Controller;
 import com.toedter.calendar.JCalendar;
 import model.Reservation;
 import model.Restaurant;
+import model.User;
+import model.services.ReservationService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
@@ -22,7 +23,9 @@ public class UserPanel extends JPanel {
     private JButton okButton;
     private JCalendar calendar;
 
+    private ReservationService reservationService = new ReservationService();
     private final Controller controller = Controller.getInstance();
+    private User loggedInUser = Controller.getLoggedInUser();
 
     public UserPanel() {
         setLayout(new BorderLayout());
@@ -165,22 +168,33 @@ public class UserPanel extends JPanel {
             LocalDate localDate = selectedDate.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
+            //dodati session tracker ulogiranog usera
 
-            System.out.println(localDate);
-            System.out.println(restaurant);
-            System.out.println(time);
-            System.out.println(guests);
-            System.out.println(notes);
+            if (restaurant == null) {
+                JOptionPane.showMessageDialog(this, "Please select a restaurant!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (localDate == null) {
+                JOptionPane.showMessageDialog(this, "Please select a date!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
 
-            //dodati validaciju podataka iz panela i dodati session tracker ulogiranog usera
+            } else if (time == null) {
+                JOptionPane.showMessageDialog(this, "Please select a time!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            } else if (guests <= 0) {
+                JOptionPane.showMessageDialog(this, "Please select a guest!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
 
             Reservation reservation = new Reservation();
             reservation.setLocalDate(localDate);
             reservation.setNumberOfGuests(guests);
             reservation.setTime(time);
             reservation.setRestaurantId(restaurant.getId());
-            reservation.setUsername(restaurant.getUsername());
+            reservation.setUsername(Controller.getLoggedInUser().getUsername());
+            reservationService.add(reservation);
 
+            System.out.println(reservationService.getUserReservations(reservation.getUsername()));
 
             // Format date for display
             java.util.Calendar cal = java.util.Calendar.getInstance();

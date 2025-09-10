@@ -5,17 +5,22 @@ import javax.swing.*;
 
 public class UserMenuBar extends JMenuBar {
 
-    public UserMenuBar(JFrame frame) { // pass the frame so we can switch panels
+    public UserMenuBar(JFrame frame) {
         // File Menu
         JMenu fileMenu = new JMenu("File");
 
         // My Reservations option
         JMenuItem myReservationsItem = new JMenuItem("My Reservations");
         myReservationsItem.addActionListener(e -> {
-            // TODO: Implement navigation to reservations view
-            // This could open a dialog or switch to a different panel showing user's reservations
-            JOptionPane.showMessageDialog(frame, "My Reservations feature - TODO: Implement",
-                    "Feature", JOptionPane.INFORMATION_MESSAGE);
+            JDialog reservationsDialog = new JDialog(frame, "My Reservations", true);
+            reservationsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+            MyReservationsPanel reservationsPanel = new MyReservationsPanel();
+            reservationsDialog.add(reservationsPanel);
+
+            reservationsDialog.setSize(800, 500);
+            reservationsDialog.setLocationRelativeTo(frame);
+            reservationsDialog.setVisible(true);
         });
 
         // Log Out option

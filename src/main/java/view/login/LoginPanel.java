@@ -3,7 +3,6 @@ package view.login;
 import controller.Controller;
 import model.Role;
 import model.User;
-import model.services.UserService;
 import view.user.UserFrame;
 
 import javax.swing.*;
@@ -15,6 +14,7 @@ public class LoginPanel extends JPanel {
     private JPasswordField passwordField;
     private JButton loginButton;
     private final Controller controller = Controller.getInstance();
+    private User loggedInUser = Controller.getLoggedInUser();
 
     public LoginPanel() {
         setLayout(new GridBagLayout());
@@ -62,6 +62,7 @@ public class LoginPanel extends JPanel {
                 User object = new User();
                 object = controller.getUserByUsername(username);
                 if (object.getRole() == Role.USER){
+                    Controller.setLoggedInUser(object);
                     new UserFrame();
                 }
 

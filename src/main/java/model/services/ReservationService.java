@@ -5,11 +5,22 @@ import model.Reservation;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ReservationService {
     public final List<Reservation> reservationList = new ArrayList<>();
 
     public void add(Reservation reservation) {
         reservationList.add(reservation);
         System.out.println("Reservation added " + reservation);
+    }
+
+    public List<Reservation> getUserReservations(String username) {
+        List<Reservation> userReservations = new ArrayList<>();
+        for (Reservation reservation : reservationList) {
+            if (reservation.getUsername().equals(username)) {
+                userReservations.add(reservation);
+            }
+        }
+        return userReservations;
     }
 }
