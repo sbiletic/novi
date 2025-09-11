@@ -11,7 +11,7 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 
 /**
- * ReservationPanel - Displays reservations in a JTable with Confirm + Cancel buttons
+ * ReservationPanel - Displays reservations in a JTable with Restaurant + Confirm/Cancel buttons
  */
 public class ReservationPanel extends JPanel {
 
@@ -22,12 +22,12 @@ public class ReservationPanel extends JPanel {
     public ReservationPanel(JFrame frame) {
         setLayout(new BorderLayout());
 
-        // Define table columns (separate Confirm + Cancel)
-        String[] columnNames = {"Name", "Phone Number", "Date and Time", "Guests", "Status", "Confirm", "Cancel"};
+        // ✅ Removed text headers for Confirm/Cancel columns
+        String[] columnNames = {"Name", "Phone Number", "Restaurant", "Date and Time", "Guests", "Status", "", ""};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 5 || column == 6; // only confirm/cancel columns are editable
+                return column == 6 || column == 7; // only confirm/cancel columns are editable
             }
         };
 
@@ -38,7 +38,7 @@ public class ReservationPanel extends JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 0; i < table.getColumnCount(); i++) {
-            if (!table.getColumnName(i).equals("Confirm") && !table.getColumnName(i).equals("Cancel")) {
+            if (!table.getColumnName(i).equals("") && !table.getColumnName(i).equals("")) {
                 table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             }
         }
@@ -46,23 +46,23 @@ public class ReservationPanel extends JPanel {
         loadReservations();
 
         // Add Confirm + Cancel buttons as separate columns
-        table.getColumn("Confirm").setCellRenderer(new ButtonRenderer("Confirm"));
-        table.getColumn("Confirm").setCellEditor(new ButtonEditor(new JCheckBox(), table, "Confirm"));
+        table.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer("Confirm"));
+        table.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor(new JCheckBox(), table, "Confirm"));
 
-        table.getColumn("Cancel").setCellRenderer(new ButtonRenderer("Cancel"));
-        table.getColumn("Cancel").setCellEditor(new ButtonEditor(new JCheckBox(), table, "Cancel"));
+        table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer("Cancel"));
+        table.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor(new JCheckBox(), table, "Cancel"));
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
     }
 
     private void loadReservations() {
-        // ✅ Sample data for testing
+        // ✅ Sample data for testing with restaurant names
         Object[][] sampleData = {
-                {"John Doe", "123456789", "2025-09-12 19:00", 4, "Pending", "Confirm", "Cancel"},
-                {"Alice Smith", "987654321", "2025-09-13 20:30", 2, "Pending", "Confirm", "Cancel"},
-                {"Bob Johnson", "555666777", "2025-09-14 18:15", 6, "Pending", "Confirm", "Cancel"},
-                {"Emma Brown", "444555666", "2025-09-15 21:00", 3, "Pending", "Confirm", "Cancel"}
+                {"John Doe", "123456789", "Pasta Palace", "2025-09-12 19:00", 4, "Pending"},
+                {"Alice Smith", "987654321", "Burger Barn", "2025-09-13 20:30", 2, "Pending"},
+                {"Bob Johnson", "555666777", "Sushi World", "2025-09-14 18:15", 6, "Pending"},
+                {"Emma Brown", "444555666", "Pizza Hub", "2025-09-15 21:00", 3, "Pending"}
         };
 
         for (Object[] row : sampleData) {
@@ -105,9 +105,9 @@ class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
             int row = tableRef.getEditingRow();
             if (row >= 0) {
                 if (actionType.equals("Confirm")) {
-                    tableRef.setValueAt("Confirmed", row, 4);
+                    tableRef.setValueAt("Confirmed", row, 5); // update Status column
                 } else if (actionType.equals("Cancel")) {
-                    tableRef.setValueAt("Canceled", row, 4);
+                    tableRef.setValueAt("Canceled", row, 5);
                 }
             }
             fireEditingStopped();
