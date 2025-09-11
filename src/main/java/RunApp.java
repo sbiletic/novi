@@ -9,7 +9,7 @@ public class RunApp {
     public static void main(String[] args) throws UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel(new FlatIntelliJLaf());
         SwingUtilities.invokeLater(() -> {
-            UserFrame loginFrame = new UserFrame();
+            LoginFrame loginFrame = new LoginFrame();
         });
     }
 }

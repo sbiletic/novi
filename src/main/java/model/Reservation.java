@@ -10,7 +10,7 @@ public class Reservation {
     private int numberOfGuests;
     private LocalDate date;
     private String time;
-    private String message;
+    private String message = "No message provided";
     private ReservationStatus status = ReservationStatus.PENDING;
 
     public int getId() {
@@ -74,7 +74,7 @@ public class Reservation {
         return "Reservation{" +
                 "id=" + id +
                 ", restaurantId=" + restaurantId +
-                ", userId=" + username +
+                ", username=" + username +
                 ", numberSeats=" + numberOfGuests +
                 ", date='" + date + '\'' +
                 ", time='" + time + '\'' +

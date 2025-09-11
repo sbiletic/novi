@@ -168,7 +168,6 @@ public class UserPanel extends JPanel {
             LocalDate localDate = selectedDate.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
-            //dodati session tracker ulogiranog usera
 
             if (restaurant == null) {
                 JOptionPane.showMessageDialog(this, "Please select a restaurant!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -192,7 +191,7 @@ public class UserPanel extends JPanel {
             reservation.setTime(time);
             reservation.setRestaurantId(restaurant.getId());
             reservation.setUsername(Controller.getLoggedInUser().getUsername());
-            reservationService.add(reservation);
+            controller.addReservation(reservation);
 
             System.out.println(reservationService.getUserReservations(reservation.getUsername()));
 

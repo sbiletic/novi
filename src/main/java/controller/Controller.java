@@ -71,5 +71,11 @@ public class Controller {
     //TODO dovrsiti ovu metodu, dodati u restaurant service klasi metodu koja vraca objekt restaurant po parametru
     //TODO tipa String restaurantId
     public Restaurant getRestaurantById(int restaurantId) {
+        return restaurantService.getRestaurant(restaurantId);
     }
+
+    public boolean removeReservation(int reservationId) {
+       return reservationService.removeUserReservation(reservationId);
+    }
+
 }

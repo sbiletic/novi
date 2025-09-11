@@ -20,7 +20,6 @@ public class MyReservationsPanel extends JPanel {
     private DefaultTableModel tableModel;
     private final Controller controller = Controller.getInstance();
 
-    private ReservationService reservationService = new ReservationService();
     private User loggedInUser = Controller.getLoggedInUser();
 
     public MyReservationsPanel() {
@@ -32,8 +31,8 @@ public class MyReservationsPanel extends JPanel {
     }
 
     private void initializeComponents() {
-        // Create table model with columns
-        String[] columnNames = {"Restaurant", "Date", "Time", "Guests", "Notes", "Status", "Action"};
+        // Create table model with columns (including hidden reservation column)
+        String[] columnNames = {"Restaurant", "Date", "Time", "Guests", "Notes", "Status", "Action", "ReservationObj"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -49,13 +48,18 @@ public class MyReservationsPanel extends JPanel {
         javax.swing.table.DefaultTableCellRenderer centerRenderer = new javax.swing.table.DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
-        for (int i = 0; i < reservationsTable.getColumnCount() - 1; i++) {
+        for (int i = 0; i < reservationsTable.getColumnCount() - 2; i++) { // -2 to exclude Action and ReservationObj columns
             reservationsTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
         // Set up the delete button column
         reservationsTable.getColumn("Action").setCellRenderer(new ButtonRenderer());
         reservationsTable.getColumn("Action").setCellEditor(new ButtonEditor(new JCheckBox()));
+
+        // Hide the reservation object column
+        reservationsTable.getColumn("ReservationObj").setMinWidth(0);
+        reservationsTable.getColumn("ReservationObj").setMaxWidth(0);
+        reservationsTable.getColumn("ReservationObj").setWidth(0);
 
         // Set preferred column widths
         reservationsTable.getColumnModel().getColumn(0).setPreferredWidth(150); // Restaurant
@@ -91,47 +95,68 @@ public class MyReservationsPanel extends JPanel {
     }
 
     private void loadReservations() {
-        // Clear existing data
         tableModel.setRowCount(0);
 
-        // TODO: Implement logic to get user's reservations from database
-         User loggedInUser = Controller.getLoggedInUser();
-         List<Reservation> userReservations = controller.getUserReservations(loggedInUser.getUsername());
+        User loggedInUser = Controller.getLoggedInUser();
+        List<Reservation> userReservations = controller.getUserReservations(loggedInUser.getUsername());
 
-         for (Reservation reservation : userReservations) {
-             String restaurantName = controller.getRestaurantById(reservation.getRestaurantId()).getName();
-             Object[] row = {
-                 restaurantName,
-                 reservation.getLocalDate().toString(),
-                 reservation.getTime(),
-                 reservation.getNumberOfGuests(),
-                 reservation.getMessage() != null ? reservation.getMessage() : "",
-                 reservation.getStatus() != null ? reservation.getStatus() : ReservationStatus.PENDING,
-                 "Delete"
-             };
-             tableModel.addRow(row);
-         }
-
-        // Sample data for testing - remove this when implementing actual logic
-        Object[][] sampleData = {
-                {"Restaurant A", "2024-01-15", "19:00", 4, "Birthday celebration", "Confirmed", "Delete"},
-                {"Restaurant B", "2024-01-20", "20:30", 2, "Anniversary dinner", "Pending", "Delete"},
-                {"Restaurant C", "2024-01-25", "18:00", 6, "Business meeting", "Confirmed", "Delete"}
-        };
-
-        for (Object[] row : sampleData) {
+        for (Reservation reservation : userReservations) {
+            String restaurantName = controller.getRestaurantById(reservation.getRestaurantId()).getName();
+            Object[] row = {
+                    restaurantName,
+                    reservation.getLocalDate().toString(),
+                    reservation.getTime(),
+                    reservation.getNumberOfGuests(),
+                    reservation.getMessage() != null ? reservation.getMessage() : "",
+                    reservation.getStatus() != null ? reservation.getStatus() : ReservationStatus.PENDING,
+                    "Delete",
+                    reservation // Store the entire reservation object in hidden column
+            };
             tableModel.addRow(row);
         }
     }
 
-    // Custom button renderer for the delete button
     class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
-            setOpaque(true);
-            setText("-");
-            setBackground(Color.RED);
+            setOpaque(false);
+            setText("DELETE");
+            setFont(new Font("Arial", Font.BOLD, 10));
             setForeground(Color.WHITE);
+            setBackground(Color.RED);
+            setBorder(BorderFactory.createEmptyBorder());
+            setFocusPainted(false);
+            setContentAreaFilled(false);
             setToolTipText("Delete Reservation");
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw rounded rectangle
+            g2.setColor(Color.RED);
+            int width = getWidth() - 4;
+            int height = getHeight() - 8;
+            int x = (getWidth() - width) / 2;
+            int y = (getHeight() - height) / 2;
+            g2.fillRoundRect(x, y, width, height, 8, 8);
+
+            // Draw border
+            g2.setColor(new Color(180, 0, 0));
+            g2.setStroke(new BasicStroke(1));
+            g2.drawRoundRect(x, y, width, height, 8, 8);
+
+            // Draw text
+            g2.setColor(Color.WHITE);
+            g2.setFont(getFont());
+            FontMetrics fm = g2.getFontMetrics();
+            String text = "DELETE";
+            int textX = (getWidth() - fm.stringWidth(text)) / 2;
+            int textY = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+            g2.drawString(text, textX, textY);
+
+            g2.dispose();
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value,
@@ -140,7 +165,6 @@ public class MyReservationsPanel extends JPanel {
         }
     }
 
-    // Custom button editor for handling delete button clicks
     class ButtonEditor extends DefaultCellEditor {
         protected JButton button;
         private String label;
@@ -149,11 +173,49 @@ public class MyReservationsPanel extends JPanel {
 
         public ButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-            button = new JButton();
-            button.setOpaque(true);
-            button.setText("🗑️");
-            button.setBackground(Color.RED);
+            button = new JButton() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                    // Determine if button is being pressed
+                    Color bgColor = getModel().isPressed() ? new Color(200, 0, 0) : Color.RED;
+
+                    // Draw rounded rectangle
+                    g2.setColor(bgColor);
+                    int width = getWidth() - 4;
+                    int height = getHeight() - 8;
+                    int x = (getWidth() - width) / 2;
+                    int y = (getHeight() - height) / 2;
+                    g2.fillRoundRect(x, y, width, height, 8, 8);
+
+                    // Draw border
+                    g2.setColor(new Color(180, 0, 0));
+                    g2.setStroke(new BasicStroke(1));
+                    g2.drawRoundRect(x, y, width, height, 8, 8);
+
+                    // Draw text
+                    g2.setColor(Color.WHITE);
+                    g2.setFont(getFont());
+                    FontMetrics fm = g2.getFontMetrics();
+                    String text = "DELETE";
+                    int textX = (getWidth() - fm.stringWidth(text)) / 2;
+                    int textY = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+                    g2.drawString(text, textX, textY);
+
+                    g2.dispose();
+                }
+            };
+
+            button.setOpaque(false);
+            button.setText("DELETE");
+            button.setFont(new Font("Arial", Font.BOLD, 10));
             button.setForeground(Color.WHITE);
+            button.setBackground(Color.RED);
+            button.setBorder(BorderFactory.createEmptyBorder());
+            button.setFocusPainted(false);
+            button.setContentAreaFilled(false);
             button.setToolTipText("Delete Reservation");
 
             button.addActionListener(new ActionListener() {
@@ -166,7 +228,6 @@ public class MyReservationsPanel extends JPanel {
         public Component getTableCellEditorComponent(JTable table, Object value,
                                                      boolean isSelected, int row, int column) {
             label = (value == null) ? "" : value.toString();
-            button.setText(label);
             selectedRow = row;
             isPushed = true;
             return button;
@@ -174,7 +235,6 @@ public class MyReservationsPanel extends JPanel {
 
         public Object getCellEditorValue() {
             if (isPushed) {
-                // TODO: Implement reservation deletion logic here
                 int option = JOptionPane.showConfirmDialog(
                         MyReservationsPanel.this,
                         "Are you sure you want to delete this reservation?",
@@ -184,33 +244,24 @@ public class MyReservationsPanel extends JPanel {
                 );
 
                 if (option == JOptionPane.YES_OPTION) {
-                    // TODO: Get reservation ID from the selected row and delete from database
-                    // String restaurantName = (String) tableModel.getValueAt(selectedRow, 0);
-                    // String date = (String) tableModel.getValueAt(selectedRow, 1);
-                    // String time = (String) tableModel.getValueAt(selectedRow, 2);
-                    //
-                    // Find the reservation by these details and delete it
-                    // boolean success = controller.deleteReservation(reservationId);
-                    //
-                    // if (success) {
-                    //     tableModel.removeRow(selectedRow);
-                    //     JOptionPane.showMessageDialog(MyReservationsPanel.this,
-                    //         "Reservation deleted successfully!",
-                    //         "Success",
-                    //         JOptionPane.INFORMATION_MESSAGE);
-                    // } else {
-                    //     JOptionPane.showMessageDialog(MyReservationsPanel.this,
-                    //         "Failed to delete reservation. Please try again.",
-                    //         "Error",
-                    //         JOptionPane.ERROR_MESSAGE);
-                    // }
+                    // Get the reservation object from the hidden column
+                    Reservation reservationToDelete = (Reservation) tableModel.getValueAt(selectedRow, 7);
 
-                    // For now, just remove from table (replace with actual deletion logic)
-                    tableModel.removeRow(selectedRow);
-                    JOptionPane.showMessageDialog(MyReservationsPanel.this,
-                            "Reservation deleted successfully!",
-                            "Success",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    // Call controller method with the actual reservation ID
+                    boolean success = controller.removeReservation(reservationToDelete.getId());
+
+                    if (success) {
+                        tableModel.removeRow(selectedRow);
+                        JOptionPane.showMessageDialog(MyReservationsPanel.this,
+                                "Reservation deleted successfully!",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(MyReservationsPanel.this,
+                                "Failed to delete reservation. Please try again.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
             isPushed = false;
