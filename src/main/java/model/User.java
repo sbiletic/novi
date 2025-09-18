@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class User {
+public class User implements Serializable{
     private int id = ThreadLocalRandom.current().nextInt(1, 999999);
     private String username;
     private String password;

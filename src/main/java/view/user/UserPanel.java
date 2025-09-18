@@ -193,7 +193,7 @@ public class UserPanel extends JPanel {
             reservation.setUsername(Controller.getLoggedInUser().getUsername());
             controller.addReservation(reservation);
 
-            System.out.println(reservationService.getUserReservations(reservation.getUsername()));
+            System.out.println("Reservations from " + loggedInUser.getUsername() + " : " + controller.getUserReservations(reservation.getUsername()));
 
             // Format date for display
             java.util.Calendar cal = java.util.Calendar.getInstance();

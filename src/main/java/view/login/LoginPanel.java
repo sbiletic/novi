@@ -3,6 +3,7 @@ package view.login;
 import controller.Controller;
 import model.Role;
 import model.User;
+import view.restaurant.ReservationFrame;
 import view.user.UserFrame;
 
 import javax.swing.*;
@@ -64,6 +65,10 @@ public class LoginPanel extends JPanel {
                 if (object.getRole() == Role.USER){
                     Controller.setLoggedInUser(object);
                     new UserFrame();
+                }
+                if (object.getRole() == Role.RESTAURANT){
+                    Controller.setLoggedInUser(object);
+                    new ReservationFrame();
                 }
 
                 Window window = SwingUtilities.getWindowAncestor(this);

@@ -5,15 +5,14 @@ import javax.swing.*;
 public class ReservationFrame extends JFrame {
 
     public ReservationFrame() {
-        setTitle("Reservations - Restaurant");
-        setSize(800, 500);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        JFrame frame = new JFrame("Reservations");
+        ReservationPanel reservationPanel = new ReservationPanel(frame);
+        ReservationMenuBar menuBar = new ReservationMenuBar(frame, reservationPanel);
 
-        setJMenuBar(new ReservationMenuBar(this));
-
-        add(new ReservationPanel(this));
-
-        setVisible(true);
+        frame.setJMenuBar(menuBar);
+        frame.add(reservationPanel);
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
     }
 }

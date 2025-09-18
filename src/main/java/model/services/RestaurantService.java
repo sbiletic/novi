@@ -26,4 +26,12 @@ public class RestaurantService {
         }
         return null;
     }
+
+    public Restaurant getRestaurantId(int id) {
+        for (Restaurant restaurant : restaurants) {
+            if (restaurant.getId() == id) {
+                return restaurant;
+            }
+        }return null;
+    }
 }

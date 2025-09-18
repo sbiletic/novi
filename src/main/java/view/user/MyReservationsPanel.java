@@ -244,10 +244,8 @@ public class MyReservationsPanel extends JPanel {
                 );
 
                 if (option == JOptionPane.YES_OPTION) {
-                    // Get the reservation object from the hidden column
                     Reservation reservationToDelete = (Reservation) tableModel.getValueAt(selectedRow, 7);
 
-                    // Call controller method with the actual reservation ID
                     boolean success = controller.removeReservation(reservationToDelete.getId());
 
                     if (success) {

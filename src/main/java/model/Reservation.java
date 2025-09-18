@@ -1,9 +1,11 @@
 package model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Reservation {
+
+public class Reservation implements Serializable {
     private int id = ThreadLocalRandom.current().nextInt(1, 999999);
     private int restaurantId;
     private String username;

@@ -1,11 +1,13 @@
 package controller;
 
 import model.Reservation;
+import model.ReservationStatus;
 import model.Restaurant;
 import model.User;
 import model.services.ReservationService;
 import model.services.RestaurantService;
 import model.services.UserService;
+import utils.FileStorage;
 
 import java.util.List;
 
@@ -78,4 +80,22 @@ public class Controller {
        return reservationService.removeUserReservation(reservationId);
     }
 
+    public List<Reservation> getReservationsByRestaurantId(int restaurantId) {
+        return reservationService.getReservationsByRestaurantId(restaurantId);
+    }
+
+    public Restaurant getRestaurantByRestaurantId(int restaurantId) {
+        return restaurantService.getRestaurantId(restaurantId);
+    }
+    public void updateReservation(int reservationId, ReservationStatus reservationStatus ) {
+        reservationService.updateReservation(reservationId, reservationStatus);
+    }
+
+    public List<Reservation> getAllReservations() {
+        return reservationService.getAllReservations();
+    }
+
+    public void loadReservations( List<Reservation> reservations) {
+        reservationService.loadReservations(reservations);
+    }
 }

@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Restaurant {
-    private int id = ThreadLocalRandom.current().nextInt(1, 999999);
+public class Restaurant implements Serializable {
+private int id = ThreadLocalRandom.current().nextInt(1, 999999);
     private int username;
     private String name;
     private String address;
