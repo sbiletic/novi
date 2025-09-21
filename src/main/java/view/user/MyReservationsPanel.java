@@ -4,7 +4,6 @@ import controller.Controller;
 import model.Reservation;
 import model.ReservationStatus;
 import model.User;
-import model.services.ReservationService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -167,8 +166,6 @@ public class MyReservationsPanel extends JPanel {
 
     class ButtonEditor extends DefaultCellEditor {
         protected JButton button;
-        private String label;
-        private boolean isPushed;
         private int selectedRow;
 
         public ButtonEditor(JCheckBox checkBox) {
@@ -218,61 +215,57 @@ public class MyReservationsPanel extends JPanel {
             button.setContentAreaFilled(false);
             button.setToolTipText("Delete Reservation");
 
+            // ✅ All deletion logic happens here, AFTER editing stopped
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    fireEditingStopped();
+                    int viewRow = reservationsTable.getEditingRow();
+                    final int modelRow = (viewRow >= 0)
+                            ? reservationsTable.convertRowIndexToModel(viewRow)
+                            : selectedRow;
+
+                    fireEditingStopped(); // stop editing first
+
+                    SwingUtilities.invokeLater(() -> {
+                        int option = JOptionPane.showConfirmDialog(
+                                MyReservationsPanel.this,
+                                "Are you sure you want to delete this reservation?",
+                                "Confirm Deletion",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE
+                        );
+
+                        if (option == JOptionPane.YES_OPTION) {
+                            Reservation reservationToDelete = (Reservation) tableModel.getValueAt(modelRow, 7);
+                            boolean success = controller.removeReservation(reservationToDelete.getId());
+
+                            if (success) {
+                                if (modelRow >= 0 && modelRow < tableModel.getRowCount()) {
+                                    tableModel.removeRow(modelRow);
+                                }
+                                JOptionPane.showMessageDialog(MyReservationsPanel.this,
+                                        "Reservation deleted successfully!",
+                                        "Success",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(MyReservationsPanel.this,
+                                        "Failed to delete reservation. Please try again.",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    });
                 }
             });
         }
 
         public Component getTableCellEditorComponent(JTable table, Object value,
                                                      boolean isSelected, int row, int column) {
-            label = (value == null) ? "" : value.toString();
             selectedRow = row;
-            isPushed = true;
             return button;
         }
 
         public Object getCellEditorValue() {
-            if (isPushed) {
-                int option = JOptionPane.showConfirmDialog(
-                        MyReservationsPanel.this,
-                        "Are you sure you want to delete this reservation?",
-                        "Confirm Deletion",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE
-                );
-
-                if (option == JOptionPane.YES_OPTION) {
-                    Reservation reservationToDelete = (Reservation) tableModel.getValueAt(selectedRow, 7);
-
-                    boolean success = controller.removeReservation(reservationToDelete.getId());
-
-                    if (success) {
-                        tableModel.removeRow(selectedRow);
-                        JOptionPane.showMessageDialog(MyReservationsPanel.this,
-                                "Reservation deleted successfully!",
-                                "Success",
-                                JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(MyReservationsPanel.this,
-                                "Failed to delete reservation. Please try again.",
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-            isPushed = false;
-            return label;
-        }
-
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
-
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
+            return "Delete"; // placeholder, not used
         }
     }
 }

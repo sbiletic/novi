@@ -15,9 +15,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ReservationPanel - Displays reservations in a JTable with Restaurant + Confirm/Cancel buttons
- */
 public class ReservationPanel extends JPanel {
 
     private JTable table;
@@ -40,7 +37,6 @@ public class ReservationPanel extends JPanel {
         table = new JTable(tableModel);
         table.setRowHeight(35);
 
-        // Center align text za sve osim botuna
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 1; i < table.getColumnCount() - 2; i++) {
@@ -49,15 +45,12 @@ public class ReservationPanel extends JPanel {
 
         loadReservations();
 
-        // Confirm button
         table.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer("Confirm"));
         table.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor(new JCheckBox(), table, "Confirm", this));
 
-        // Cancel button
         table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer("Cancel"));
         table.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor(new JCheckBox(), table, "Cancel", this));
 
-        // Sakrij ID stupac (vidljiv u modelu, ne u prikazu)
         table.removeColumn(table.getColumnModel().getColumn(0));
 
         JScrollPane scrollPane = new JScrollPane(table);
@@ -68,31 +61,23 @@ public class ReservationPanel extends JPanel {
         loadAllReservations();
     }
 
-    /**
-     * Load all reservations for managers to view
-     */
     private void loadAllReservations() {
-        // Clear existing data
         tableModel.setRowCount(0);
 
-        // Get all restaurants managed by the logged-in manager
         List<Restaurant> getAllRestaurants = controller.getAllRestaurants();
         getAllRestaurants.removeIf(restaurant -> !restaurant.getManager().getUsername().equals(loggedInUser.getUsername()));
 
         List<Reservation> allReservations = new ArrayList<>();
 
-        // Collect all reservations from all managed restaurants
         for (Restaurant restaurant : getAllRestaurants) {
             allReservations.addAll(controller.getReservationsByRestaurantId(restaurant.getId()));
         }
 
-        // Populate the table with reservation data
         for (Reservation reservation : allReservations) {
-            // Format date and time together
             String formattedDateTime = reservation.getLocalDate() + " " + reservation.getTime();
 
             Object[] rowData = {
-                    reservation.getId(), // skriven ID
+                    reservation.getId(),
                     reservation.getUsername(),
                     controller.getRestaurantByRestaurantId(reservation.getRestaurantId()),
                     formattedDateTime,
@@ -105,18 +90,11 @@ public class ReservationPanel extends JPanel {
         }
     }
 
-    /**
-     * Public method to refresh the table data
-     * Useful for updating the view after status changes
-     */
     public void refreshTable() {
         loadReservations();
     }
 }
 
-/**
- * Renders a single button inside a JTable cell
- */
 class ButtonRenderer extends JButton implements TableCellRenderer {
 
     public ButtonRenderer(String label) {
@@ -131,15 +109,12 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
     }
 }
 
-/**
- * Handles Confirm/Cancel button clicks
- */
 class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
     private JButton button;
     private JTable tableRef;
-    private String actionType; // "Confirm" or "Cancel"
+    private String actionType;
     private final Controller controller = Controller.getInstance();
-    private ReservationPanel parentPanel; // da možemo refreshtati tablicu
+    private ReservationPanel parentPanel;
 
     public ButtonEditor(JCheckBox checkBox, JTable table, String actionType, ReservationPanel parentPanel) {
         this.tableRef = table;

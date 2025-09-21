@@ -6,9 +6,8 @@ import model.ReservationStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ReservationService {
-    public final List<Reservation> reservationList = new ArrayList<>();
+    private final List<Reservation> reservationList = new ArrayList<>();
 
     public void add(Reservation reservation) {
         reservationList.add(reservation);
@@ -26,15 +25,11 @@ public class ReservationService {
     }
 
     public boolean removeUserReservation(int reservationId) {
-        boolean removed = false;
-        for (Reservation reservation : reservationList) {
-            if (reservation.getId() == reservationId) {
-                reservationList.remove(reservation);
-                System.out.println("Reservation with id " + reservationId + " removed");
-                removed = true;
-            } else {
-                System.out.println("Reservation with id " + reservationId + " not found");
-            }
+        boolean removed = reservationList.removeIf(r -> r.getId() == reservationId);
+        if (removed) {
+            System.out.println("Reservation with id " + reservationId + " removed");
+        } else {
+            System.out.println("Reservation with id " + reservationId + " not found");
         }
         return removed;
     }
@@ -55,19 +50,21 @@ public class ReservationService {
             if (reservation.getId() == reservationId) {
                 reservation.setStatus(reservationStatus);
                 System.out.println("Reservation with id " + reservationId + " updated");
+                break; // stop after first match
             }
         }
     }
+
     public List<Reservation> getAllReservations() {
-        return reservationList;
+        return new ArrayList<>(reservationList); // defensive copy
     }
 
-    public void loadReservations(List<Reservation> reservationsFromFile)  {
+    public void loadReservations(List<Reservation> reservationsFromFile) {
         reservationsFromFile.stream()
-                .filter(rFromFile ->
-                        reservationList.stream()
+                .filter(rFromFile -> reservationList.stream()
                         .noneMatch(r -> r.getId() == rFromFile.getId()))
                 .forEach(reservationList::add);
-        System.out.println("Reservation list loaded" + reservationList);
+
+        System.out.println("Reservation list loaded: " + reservationList.size() + " reservations");
     }
 }
